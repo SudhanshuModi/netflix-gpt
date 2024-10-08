@@ -1,10 +1,23 @@
 import { useState, useRef } from "react";
 import { Header } from ".";
 import { checkValidData } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../utils/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -24,18 +37,61 @@ const Login = () => {
     } else {
       setErrorMessage(null);
     }
-    const validateResult = checkValidData(
+    const validateMessage = checkValidData(
       emailRef.current.value,
       passwordRef.current.value
     );
-    // if validation fails, set the error message
-    if (validateResult) {
-      setErrorMessage(validateResult);
-      return;
+    setErrorMessage(validateMessage);
+    if (validateMessage) return;
+
+    // Sign In / Sign Up logic
+    if (isSignInForm) {
+      signInWithEmailAndPassword(
+        auth,
+        emailRef.current.value,
+        passwordRef.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+          // redirect to browse page
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const { code, message } = error;
+          setErrorMessage("Invalid Email or Password");
+          console.log(`${code} => ${message}`);
+        });
     } else {
-      setErrorMessage(null);
+      createUserWithEmailAndPassword(
+        auth,
+        emailRef.current.value,
+        passwordRef.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: nameRef.current.value,
+          })
+            .then(() => {
+              const { uid, email, displayName } = auth.currentUser;
+              dispatch(
+                login({ uid: uid, email: email, displayName: displayName })
+              );
+              navigate("/browse");
+            })
+            .catch((error) => {
+              console.log(error);
+              setErrorMessage("Something went wrong");
+            });
+          console.log(user);
+        })
+        .catch((error) => {
+          const { code, message } = error;
+          setErrorMessage("Email already in use");
+          console.log(`${code} => ${message}`);
+        });
     }
-    // if validation passes, proceed with the form submission
   };
 
   return (
