@@ -3,8 +3,11 @@
 - Create React App
 - Configured TailwindCSS
 - Header
+- Routing of App
 - Login Form
 - Sign Up Form
+- Form Validation
+- useRef Hook
 
 # Features
 
@@ -24,5 +27,6 @@
 
 # Resume Points
 
-- using same form for sign-in and sign-up for changing its text using state management
+- using same form for sign-in and sign-up for changing its text using state management (usestate)
 - used formik
+- toggling sign-in and sign-up form on the basis of a state variable
