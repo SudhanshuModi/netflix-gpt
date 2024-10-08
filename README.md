@@ -21,3 +21,8 @@
 - NetflixGPT
   - Search Bar
   - Movie Suggestions
+
+# Resume Points
+
+- using same form for sign-in and sign-up for changing its text using state management
+- used formik
