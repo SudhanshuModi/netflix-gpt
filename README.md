@@ -15,7 +15,10 @@
 - Created Redux Store with userSlice
 - Implimented Sign Out
 - Update Profile
-- Fetch from TMDB Movies
+- BugFix: Sign up user displayName update
+- BugFix: If the user is not logged in Ridect /browse to login page and vice-versa
+- unsubscribed to the onAuthStateChanged callback
+- Add hardcoded values to the constant file.
 
 # Features
 
